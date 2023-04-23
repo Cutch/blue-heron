@@ -1,0 +1,80 @@
+<html>
+
+<head>
+    <title>Heron Finder</title>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <style>
+        body{
+            background-color: #131516;
+            color: #e8e6e3;
+        }
+        ::selection {
+            background-color: #004daa !important;
+            color: #e8e6e3 !important;
+        }
+        .found-wrapper {
+            
+        }
+        .found-container {
+            display: flex;
+        }
+        .found-date {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        .full-image {
+            max-width: 50%;
+            height: auto;
+        }
+        .crop-image {
+            max-width: 50%;
+            height: auto;
+        }
+        h1 {
+            font-size: 1.5rem;
+        }
+        .log-video-wrapper{
+            display: flex;
+        }
+    </style>
+    <script>
+        (function(){
+            const pullData = ()=>{
+                fetch('/data.json').then((data)=>data.json()).then((data)=>{
+                    var found = document.getElementById('found');
+                    found.innerHTML = Object.keys(data.found).sort().reverse().map((date)=>`<div class="found-wrapper"><div class="found-date">${date}</div><div class="found-container"><img class="full-image" src="${data.found[date].full}"/><img class="crop-image" src="${data.found[date].crop}"/></div></div>`).join('')
+                }).catch((e)=>{console.error(e);})
+                fetch('/log.txt').then((data)=>data.text()).then((data)=>{document.getElementById('log').innerHTML=data;}).catch((e)=>{console.error(e);})
+            }
+            pullData();
+            setInterval(pullData, 30*1000);
+        })()
+    </script>
+</head>
+
+<body>
+    <div class="log-video-wrapper">
+        <div class="video-container">
+            <h1>Video</h1>
+            <div>
+                <img src="stream.mjpg" width="640" height="480" style="max-width: 100%; height: auto;" />
+            </div>
+        </div>
+        <div class="log-container">
+            <h1>Logs</h1>
+            <code><pre id="log"></pre></code>
+        </div>
+    </div>
+
+    <h1>Found</h1>
+    <div id="found">
+
+    </div>
+</body>
+
+</html>
